@@ -40,7 +40,7 @@ ORDER_STATUS = (
 class Order(models.Model):
     customer = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     paid = models.BooleanField(default=False)
-    payment = models.CharField(max_length=30)
+    payment = models.CharField(max_length=30, null=True)
     made_on = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default=ORDER_STATUS[0][0])
 

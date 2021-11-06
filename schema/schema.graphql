@@ -33,7 +33,7 @@ type Mutation {
         productId: Int!
         quantity: Int!
     ): updateItemPayload
-    createOrder:
+    createOrder(customerid: Int): orderPayload
 }
 
 type Category {
@@ -108,5 +108,9 @@ type removeItemPayload {
 }
 
 type updateItemPayload {
+    success: Boolean
+}
+
+type orderPayload {
     success: Boolean
 }

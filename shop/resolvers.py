@@ -101,7 +101,7 @@ def resolve_cart(_, info):
 
 
 @query.field('orders')
-def resolve_ordes(_, info):
+def resolve_orders(_, info):
     return Order.objects.all()
 
 
@@ -207,6 +207,21 @@ def resolve_update_item(_, info, product_id, quantity):
         }
     except:
         return{
+            "success": False
+        }
+
+
+@mutation.field("createOrder")
+@convert_kwargs_to_snake_case
+def resolve_create_order(_, info, customer_id):
+    try:
+        order = Order.objects.create(customer_id=customer_id)
+        order.save()
+        return {
+            "success": True
+        }
+    except:
+        return {
             "success": False
         }
 
