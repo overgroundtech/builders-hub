@@ -183,5 +183,21 @@ def resolve_remove_item(_, info, product_id):
             "success": False
         }
 
+@mutation.field("updateItem")
+@convert_kwargs_to_snake_case
+def resolve_update_item(_, info, product_id, quantity):
+    try:
+        request = info.context["request"]
+        cart = Cart(request)
+        product = Product.objects.get(pk=product_id)
+        cart.update(product=product, quantity=quantity)
+        return {
+            "success": True
+        }
+    except:
+        return{
+            "success": False
+        }
+
 
 resolvers = [query, mutation, upload_scalar]

@@ -30,7 +30,7 @@ type Mutation {
     updateItem(
         productId: Int!
         quantity: Int!
-    ): updateItempPayload
+    ): updateItemPayload
 }
 
 type Category {
