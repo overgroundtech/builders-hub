@@ -1,0 +1,109 @@
+scalar Upload
+
+type Query {
+    product(productId: Int!): Product
+    products: [Product]!
+    category(categoryId: Int!): Category
+    categoryProducts: [CategoryProducts]!
+    cart: Cart
+}
+
+type Mutation {
+    createCategory(name: String!): createCategoryPayload!
+    uploadProductImage(productId: Int! image: Upload!): uploadProductImagePayload!
+    createProduct(
+        name: String!
+        categoryId: Int!
+        price: Float!
+        offer: Boolean!
+        discount: Float!
+        inStock: Int!
+    ): createProductPayload!
+    """
+    cart mutations
+    """
+    addItem(
+        productId: Int!
+        quantity: Int!
+    ): addItemPayload
+    removeItem(productId: Int!): removeItemPayload
+    updateItem(
+        productId: Int!
+        quantity: Int!
+    ): updateItempPayload
+}
+
+type Category {
+    id: Int
+    name: String
+}
+
+type Product {
+    id: Int
+    name: String
+    categoryId: Int
+    price: Float
+    offer: Boolean
+    discount: Float
+    inStock: Int
+    createdAt: String
+    images: [String]!
+}
+
+type Cart {
+    items: [Item]!
+    summary: Float
+    count: Int!
+}
+
+type Item {
+    order: Order
+    product: Product
+    unitPrice: Float
+    quantity: Int
+    total: Float
+}
+
+type Order {
+    customer: User
+    paid: Boolean
+    payment: String
+    status: String
+    madeOn: String
+}
+
+
+type CategoryProducts {
+    category: Category
+    products: [Product]
+}
+
+type User {
+    id: Int
+    username: String
+    email: String
+}
+
+type createProductPayload {
+    success: Boolean
+}
+
+type createCategoryPayload {
+    success: Boolean
+}
+
+type uploadProductImagePayload{
+    success: Boolean
+}
+
+type addItemPayload {
+    success: Boolean
+}
+
+type removeItemPayload {
+    success: Boolean
+}
+
+type updateItemPayload {
+    success: Boolean
+}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
+from shop.models import Order
 
 
 class Cart(models.Model):
@@ -26,6 +27,7 @@ class ItemManager(models.Manager):
 
 
 class Item(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, null=True)
     cart = models.ForeignKey(Cart, verbose_name=_('cart'), on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(verbose_name=_('quantity'))
     unit_price = models.DecimalField(max_digits=18, decimal_places=2, verbose_name=_('unit price'))
