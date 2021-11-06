@@ -6,6 +6,8 @@ type Query {
     category(categoryId: Int!): Category
     categoryProducts: [CategoryProducts]!
     cart: Cart
+    order(orderId: Int): Order
+    orders: [Order]
 }
 
 type Mutation {
@@ -31,6 +33,7 @@ type Mutation {
         productId: Int!
         quantity: Int!
     ): updateItemPayload
+    createOrder:
 }
 
 type Category {

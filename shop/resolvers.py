@@ -1,5 +1,5 @@
 from ariadne import QueryType, convert_kwargs_to_snake_case, MutationType, upload_scalar
-from .models import Product, Category, ProductImage
+from .models import Product, Category, ProductImage, Order
 from django.conf import settings
 from cart.cart import Cart
 
@@ -98,6 +98,17 @@ def resolve_cart(_, info):
         "summary": cart.summary(),
         "count": cart.count(),
     }
+
+
+@query.field('orders')
+def resolve_ordes(_, info):
+    return Order.objects.all()
+
+
+@query.field("order")
+@convert_kwargs_to_snake_case
+def resolve_order(_, info, product_id):
+    return Order.objects.get(pk=product_id)
 
 
 @mutation.field('createCategory')

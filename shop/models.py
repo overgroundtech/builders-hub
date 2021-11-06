@@ -30,16 +30,19 @@ class ProductImage(models.Model):
         return f'{self.product.name} {self.image.url}'
 
 
+ORDER_STATUS = (
+    ('pending', 'Pending'),
+    ('transit', 'Transit'),
+    ('delivered', 'Delivered')
+)
+
+
 class Order(models.Model):
     customer = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     paid = models.BooleanField(default=False)
     payment = models.CharField(max_length=30)
     made_on = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=(
-        ('pending', 'Pending'),
-        ('transit', 'Transit'),
-        ('delivered', 'Delivered')
-    ))
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default=ORDER_STATUS[0][0])
 
     def __str__(self):
         return self.id
