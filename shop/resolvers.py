@@ -226,4 +226,22 @@ def resolve_create_order(_, info, customer_id):
         }
 
 
+@mutation.field("updateOrder")
+@convert_kwargs_to_snake_case
+def resolve_update_order(_, info,order_id, paid, payment, status):
+    try:
+        order = Order.objects.get(pk=order_id)
+        order.paid = paid
+        order.payment = payment
+        order.status = status
+        order.save()
+        return {
+           "success": True
+        }
+    except:
+        return {
+            "success": False
+        }
+
+
 resolvers = [query, mutation, upload_scalar]

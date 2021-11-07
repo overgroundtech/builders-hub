@@ -34,6 +34,12 @@ type Mutation {
         quantity: Int!
     ): updateItemPayload
     createOrder(customerid: Int): orderPayload
+    updateOrder(
+        orderId: Boolean
+        paid: Boolean
+        payment: String
+        status: String
+    ): orderPayload
 }
 
 type Category {
