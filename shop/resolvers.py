@@ -21,6 +21,7 @@ def resolve_product(_, info, product_id):
         "discount": prod.discount,
         "inStock": prod.in_stock,
         "createdAt": prod.created_at,
+        "description": prod.description,
         "images": [
             f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
         ]
@@ -38,6 +39,7 @@ def resolve_products(_, info):
         "discount": prod.discount,
         "inStock": prod.in_stock,
         "createdAt": prod.created_at,
+        "description": prod.description,
         "images": [
             f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
         ]
@@ -72,6 +74,7 @@ def resolve_cat_prods(_, info):
                     "discount": prod.discount,
                     "inStock": prod.in_stock,
                     "createdAt": prod.created_at,
+                    "description": prod.description,
                     "images": [
                         f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
                     ]
@@ -127,7 +130,7 @@ def resolve_create_category(_, info, name):
 
 @mutation.field('createProduct')
 @convert_kwargs_to_snake_case
-def resolve_create_product(_, info, name, category_id, price, offer, discount, in_stock):
+def resolve_create_product(_, info, name, category_id, price, offer, discount, in_stock, description):
     try:
         prod = Product.objects.create(
             name=name,
@@ -135,7 +138,8 @@ def resolve_create_product(_, info, name, category_id, price, offer, discount, i
             price=price,
             offer=offer,
             discount=discount,
-            in_stock=in_stock
+            in_stock=in_stock,
+            description=description
         )
         return{
             "success": True

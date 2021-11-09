@@ -17,6 +17,7 @@ class Product(models.Model):
     discount = models.FloatField()
     in_stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField()
 
     def __str__(self):
         return self.name
