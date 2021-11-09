@@ -8,6 +8,7 @@ type Query {
     cart: Cart
     order(orderId: Int): Order
     orders: [Order]
+    me: User
 }
 
 type Mutation {
