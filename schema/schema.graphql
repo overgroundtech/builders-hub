@@ -1,4 +1,6 @@
 scalar Upload
+scalar GenericScalar
+
 
 type Query {
     product(productId: Int!): Product
@@ -8,10 +10,15 @@ type Query {
     cart: Cart
     order(orderId: Int): Order
     orders: [Order]
+    users: [User]
     me: User
 }
 
 type Mutation {
+    createUser(username: String! password: String password1: String email: String): createUserPayload
+    verifyToken(token: String!): VerifyToken
+    refreshToken(token: String!): RefreshToken
+    tokenAuth(username: String!, password:String!): TokenAuth
     createCategory(name: String!): createCategoryPayload!
     uploadProductImage(productId: Int! image: Upload!): uploadProductImagePayload!
     createProduct(
@@ -94,6 +101,34 @@ type User {
     id: Int
     username: String
     email: String
+}
+
+type createUserPayload {
+    success: Boolean
+    user: User
+}
+
+type VerifyToken {
+    payload: GenericScalar
+}
+type RefreshToken {
+    token: String
+    refresh_token: String
+    payload: GenericScalar
+}
+type TokenAuth {
+    token: String
+    refresh_token: String
+    payload: GenericScalar
+}
+
+extend type TokenAuth {
+    user: User
+}
+
+
+type RevokeToken {
+    revoked: Int
 }
 
 type createProductPayload {
