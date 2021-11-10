@@ -1,7 +1,7 @@
 from ariadne import QueryType, MutationType
 from django.contrib.auth import get_user_model
 from ariadne_jwt import resolve_verify, resolve_refresh, resolve_token_auth, GenericScalar
-from ariadne_jwt.decorators import token_auth
+from ariadne_jwt.decorators import token_auth, login_required
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
@@ -32,10 +32,9 @@ query = QueryType()
 
 
 @query.field('me')
+@login_required
 def resolve_me(_, info):
     user = info.context["request"].user
-    if user.is_anonymous:
-        raise Exception('not authenticated')
     return user
 
 

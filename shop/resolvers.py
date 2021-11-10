@@ -2,7 +2,7 @@ from ariadne import QueryType, convert_kwargs_to_snake_case, MutationType, uploa
 from .models import Product, Category, ProductImage, Order
 from django.conf import settings
 from cart.cart import Cart
-
+from ariadne_jwt.decorators import login_required
 
 query = QueryType()
 mutation = MutationType()
@@ -249,3 +249,5 @@ def resolve_update_order(_, info,order_id, paid, payment, status):
 
 
 resolvers = [query, mutation, upload_scalar]
+
+#TODO protect routes
