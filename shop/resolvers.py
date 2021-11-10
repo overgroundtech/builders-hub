@@ -132,6 +132,7 @@ def resolve_create_category(_, info, name, image):
 
 @mutation.field('createProduct')
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_create_product(_, info, name, category_id, price, offer, discount, in_stock, description):
     try:
         prod = Product.objects.create(
@@ -154,6 +155,7 @@ def resolve_create_product(_, info, name, category_id, price, offer, discount, i
 
 @mutation.field('uploadProductImage')
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_upload_prod_image(_, info, product_id, image):
     try:
         image = ProductImage.objects.create(product_id=product_id, image=image)
@@ -169,6 +171,7 @@ def resolve_upload_prod_image(_, info, product_id, image):
 
 @mutation.field('addItem')
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_add_item(_, info, product_id, quantity):
     try:
         request = info.context["request"]
@@ -186,6 +189,7 @@ def resolve_add_item(_, info, product_id, quantity):
 
 @mutation.field('removeItem')
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_remove_item(_, info, product_id):
     try:
         product = Product.objects.get(pk=product_id)
@@ -202,6 +206,7 @@ def resolve_remove_item(_, info, product_id):
 
 @mutation.field("updateItem")
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_update_item(_, info, product_id, quantity):
     try:
         request = info.context["request"]
@@ -219,6 +224,7 @@ def resolve_update_item(_, info, product_id, quantity):
 
 @mutation.field("createOrder")
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_create_order(_, info, customer_id):
     try:
         order = Order.objects.create(customer_id=customer_id)
@@ -234,6 +240,7 @@ def resolve_create_order(_, info, customer_id):
 
 @mutation.field("updateOrder")
 @convert_kwargs_to_snake_case
+@login_required
 def resolve_update_order(_, info,order_id, paid, payment, status):
     try:
         order = Order.objects.get(pk=order_id)
