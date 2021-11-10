@@ -52,7 +52,8 @@ def resolve_category(_, info, category_id):
     category = Category.objects.get(pk=category_id)
     return {
         "id": category.id,
-        "name": category.name
+        "name": category.name,
+        "image": f'{settings.SITE_URL}{category.image.url}'
     }
 
 
@@ -63,6 +64,7 @@ def resolve_cat_prods(_, info):
             "category": {
                 "id": cat.id,
                 "name": cat.name,
+                "image": f'{settings.SITE_URL}{cat.image.url}'
             },
             "products": [
                 {
@@ -115,9 +117,9 @@ def resolve_order(_, info, product_id):
 
 
 @mutation.field('createCategory')
-def resolve_create_category(_, info, name):
+def resolve_create_category(_, info, name, image):
     try:
-        category = Category.objects.create(name=name)
+        category = Category.objects.create(name=name, image=image)
         category.save()
         return {
             "success": True

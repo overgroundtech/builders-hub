@@ -18,8 +18,8 @@ type Mutation {
     createUser(username: String! password: String password1: String email: String): createUserPayload
     verifyToken(token: String!): VerifyToken
     refreshToken(token: String!): RefreshToken
-    tokenAuth(username: String!, password:String!): TokenAuth
-    createCategory(name: String!): createCategoryPayload!
+    tokenAuth(username: String! password:String!): TokenAuth
+    createCategory(name: String! image: Upload): createCategoryPayload!
     uploadProductImage(productId: Int! image: Upload!): uploadProductImagePayload!
     createProduct(
         name: String!
@@ -54,6 +54,7 @@ type Mutation {
 type Category {
     id: Int
     name: String
+    image: String
 }
 
 type Product {

@@ -65,6 +65,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'main.urls'
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
 AUTHENTICATION_BACKENDS = [
     'ariadne_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend'
