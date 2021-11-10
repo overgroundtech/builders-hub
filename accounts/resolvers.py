@@ -33,7 +33,9 @@ query = QueryType()
 
 @query.field('me')
 def resolve_me(_, info):
-    user = info.context["context"].user
+    user = info.context["request"].user
+    if user.is_anonymous:
+        raise Exception('not authenticated')
     return user
 
 
