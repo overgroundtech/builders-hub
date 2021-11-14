@@ -5,7 +5,8 @@ from shop.models import Order
 
 
 class Cart(models.Model):
-    creation_date = models.DateTimeField(verbose_name=_('creation date'))
+    cart_id = models.CharField(max_length=300)
+    creation_date = models.DateTimeField(verbose_name=_('creation date'), auto_now_add=True)
     checked_out = models.BooleanField(default=False, verbose_name=_('checked out'))
 
     class Meta:

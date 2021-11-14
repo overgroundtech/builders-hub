@@ -7,7 +7,7 @@ type Query {
     products: [Product]!
     category(categoryId: Int!): Category
     categoryProducts: [CategoryProducts]!
-    cart: Cart
+    cart(cartId: String!): Cart
     order(orderId: Int): Order
     orders: [Order]
     users: [User]
@@ -34,14 +34,16 @@ type Mutation {
     cart mutations
     """
     addItem(
+        cartId: String!
         productId: Int!
         quantity: Int!
-    ): addItemPayload
-    removeItem(productId: Int!): removeItemPayload
+    ): cartMutationPayload
+    removeItem(cartId: String! productId: Int!): cartMutationPayload
     updateItem(
+        cartId: String!
         productId: Int!
         quantity: Int!
-    ): updateItemPayload
+    ): cartMutationPayload
     createOrder(customerid: Int): orderPayload
     updateOrder(
         orderId: Boolean
@@ -66,7 +68,7 @@ type Product {
     discount: Float
     inStock: Int
     createdAt: String
-    images: [String]!
+    images: [String]
     description: String!
 }
 
@@ -144,17 +146,11 @@ type uploadProductImagePayload{
     success: Boolean
 }
 
-type addItemPayload {
+type cartMutationPayload {
     success: Boolean
+    cart: Cart
 }
 
-type removeItemPayload {
-    success: Boolean
-}
-
-type updateItemPayload {
-    success: Boolean
-}
 
 type orderPayload {
     success: Boolean
