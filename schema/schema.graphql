@@ -8,6 +8,7 @@ type Query {
     category(categoryId: Int!): Category
     categoryProducts: [CategoryProducts]!
     cart(cartId: String!): Cart
+    search(key: String!): SearchResults
     order(orderId: Int): Order
     orders: [Order]
     users: [User]
@@ -84,6 +85,10 @@ type Item {
     unitPrice: Float
     quantity: Int
     total: Float
+}
+
+type SearchResults {
+    results: [Product]
 }
 
 type Order {

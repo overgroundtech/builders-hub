@@ -86,6 +86,24 @@ def resolve_cat_prods(_, info):
     ]
 
 
+def get_prod(prod_id):
+    prod = Product.objects.get(pk=prod_id)
+    return {
+            "id": prod.id,
+            "name": prod.name,
+            "categoryId": prod.category_id,
+            "price": prod.price,
+            "offer": prod.offer,
+            "discount": prod.discount,
+            "inStock": prod.in_stock,
+            "createdAt": prod.created_at,
+            "description": prod.description,
+            "images": [
+                f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
+            ]
+    }
+
+
 @query.field('cart')
 @convert_kwargs_to_snake_case
 def resolve_cart(_, info, cart_id):
@@ -95,7 +113,7 @@ def resolve_cart(_, info, cart_id):
         "items": [
             {
                 "order": item.order,
-                "product": item.product,
+                "product": get_prod(item.product.id),
                 "unitPrice": item.unit_price,
                 "quantity": item.quantity,
                 "total": item.total_price
@@ -115,6 +133,22 @@ def resolve_orders(_, info):
 @convert_kwargs_to_snake_case
 def resolve_order(_, info, product_id):
     return Order.objects.get(pk=product_id)
+
+
+@query.field('search')
+def resolve_search(_, info, key):
+    results = []
+
+    for product in Product.objects.filter(name__contains=key):
+        results.append(get_prod(product.id))
+
+    for product in Product.objects.filter(category__name__contains=key):
+        results.append(get_prod(product.id))
+
+
+    return {
+        "results": results
+        }
 
 
 @mutation.field('createCategory')
@@ -184,7 +218,7 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -201,7 +235,7 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -215,7 +249,7 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
 
 @mutation.field('removeItem')
 @convert_kwargs_to_snake_case
-def resolve_remove_item(_, info, cart_id, product_id):
+def resolve_remove_item(_, info, product_id):
     try:
         product = Product.objects.get(pk=product_id)
         request = info.context["request"]
@@ -227,7 +261,7 @@ def resolve_remove_item(_, info, cart_id, product_id):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -244,7 +278,7 @@ def resolve_remove_item(_, info, cart_id, product_id):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -269,7 +303,7 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -286,7 +320,7 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
                 "items": [
                     {
                         "order": item.order,
-                        "product": item.product,
+                        "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
                         "total": item.total_price
@@ -334,5 +368,3 @@ def resolve_update_order(_, info,order_id, paid, payment, status):
 
 
 resolvers = [query, mutation, upload_scalar]
-
-#TODO protect routes
