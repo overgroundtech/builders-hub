@@ -5,6 +5,7 @@ scalar GenericScalar
 type Query {
     product(productId: Int!): Product
     products: [Product]!
+    similarProducts(productId: Int): [Product]
     category(categoryId: Int!): Category
     categoryProducts: [CategoryProducts]!
     cart(cartId: String!): Cart

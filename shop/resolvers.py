@@ -104,6 +104,16 @@ def get_prod(prod_id):
     }
 
 
+@query.field('similarProducts')
+@convert_kwargs_to_snake_case
+def resolve_similar_products(_, info, product_id):
+    product = Product.objects.get(pk=product_id)
+    category_id = product.category_id
+    return [
+        get_prod(prod.id) for prod in Product.objects.filter(category_id=category_id)
+    ]
+
+
 @query.field('cart')
 @convert_kwargs_to_snake_case
 def resolve_cart(_, info, cart_id):
