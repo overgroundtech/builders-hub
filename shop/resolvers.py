@@ -259,11 +259,10 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
 
 @mutation.field('removeItem')
 @convert_kwargs_to_snake_case
-def resolve_remove_item(_, info, product_id):
+def resolve_remove_item(_, info, cart_id, product_id):
     try:
         product = Product.objects.get(pk=product_id)
-        request = info.context["request"]
-        cart = Cart(request)
+        cart = Cart(cart_id)
         cart.remove(product)
         return {
             "success": True,
@@ -303,8 +302,7 @@ def resolve_remove_item(_, info, product_id):
 @convert_kwargs_to_snake_case
 def resolve_update_item(_, info, cart_id, product_id, quantity):
     try:
-        request = info.context["request"]
-        cart = Cart(request)
+        cart = Cart(cart_id)
         product = Product.objects.get(pk=product_id)
         cart.update(product=product, quantity=quantity)
         return {
