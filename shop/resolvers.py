@@ -304,7 +304,7 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
     try:
         cart = Cart(cart_id)
         product = Product.objects.get(pk=product_id)
-        cart.update(product=product, quantity=quantity)
+        cart.update(product=product, quantity=quantity, unit_price=product.price)
         return {
             "success": True,
             "cart": {
