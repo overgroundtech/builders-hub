@@ -56,7 +56,7 @@ class Cart:
     def update(self, product, quantity, unit_price=None):
         try:
             item = models.Item.objects.get(
-                cart=self.cart,
+                cart_id=self.cart.id,
                 product=product,
             )
             if quantity == 0:
