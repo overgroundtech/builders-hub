@@ -55,6 +55,10 @@ mutation = MutationType()
 @mutation.field("createUser")
 def resolve_create_user(_, info, username, password, password1, email):
     validate_password_strength(password, password1)
+    usernames = [x.username for x in get_user_model().objects.all()]
+    if username in usernames:
+        raise Exception('username already taken!')
+
     try:
         user = get_user_model().objects.create_user(username=username, password=password, email=email)
         user.save()
