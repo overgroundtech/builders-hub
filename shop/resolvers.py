@@ -145,20 +145,6 @@ def resolve_order(_, info, product_id):
     return Order.objects.get(pk=product_id)
 
 
-@query.field('search')
-def resolve_search(_, info, key):
-    results = []
-
-    for product in Product.objects.filter(name__contains=key):
-        results.append(get_prod(product.id))
-
-    for product in Product.objects.filter(category__name__contains=key):
-        results.append(get_prod(product.id))
-
-
-    return {
-        "results": results
-        }
 
 
 @mutation.field('createCategory')
@@ -337,6 +323,20 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
                 "summary": cart.summary(),
                 "count": cart.count()
             }
+        }
+
+@mutation.field('search')
+def resolve_search(_, info, key):
+    results = []
+
+    for product in Product.objects.filter(name__contains=key):
+        results.append(get_prod(product.id))
+
+    for product in Product.objects.filter(category__name__contains=key):
+        results.append(get_prod(product.id))
+
+    return {
+        "results": results
         }
 
 
