@@ -15,20 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.shortcuts import render
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 from ariadne.contrib.django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
 from . schema import schema
 
 
-def index(request):
-    return render(request, 'index.html')
-
-
 urlpatterns = [
-    path('', index, name="home"),
+    re_path('(^(?!(graphql|admin)).*$)', TemplateView.as_view(template_name="index.html"), name="home"),
     path('admin/', admin.site.urls),
     path('graphql/', csrf_exempt(GraphQLView.as_view(schema=schema)))
 ]
