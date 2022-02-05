@@ -122,7 +122,6 @@ def resolve_cart(_, info, cart_id):
     return {
         "items": [
             {
-                "order": item.order,
                 "product": get_prod(item.product.id),
                 "unitPrice": item.unit_price,
                 "quantity": item.quantity,
@@ -144,6 +143,10 @@ def resolve_orders(_, info):
 def resolve_order(_, info, product_id):
     return Order.objects.get(pk=product_id)
 
+@query.field("userOrders")
+@convert_kwargs_to_snake_case
+def resolve_user_orders(_, info, user_id):
+    return Order.objects.filter(customer_id=user_id)
 
 
 
@@ -343,9 +346,9 @@ def resolve_search(_, info, key):
 @mutation.field("createOrder")
 @convert_kwargs_to_snake_case
 @login_required
-def resolve_create_order(_, info, customer_id):
+def resolve_create_order(_, info, customer_id, cart_id):
     try:
-        order = Order.objects.create(customer_id=customer_id)
+        order = Order.objects.create(customer_id=customer_id, cart_id=cart_id)
         order.save()
         return {
             "success": True

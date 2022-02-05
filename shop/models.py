@@ -40,6 +40,7 @@ ORDER_STATUS = (
 
 
 class Order(models.Model):
+    cart_id = models.CharField(max_length=100)
     customer = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     paid = models.BooleanField(default=False)
     payment = models.CharField(max_length=30, null=True)
@@ -48,4 +49,3 @@ class Order(models.Model):
 
     def __str__(self):
         return self.id
-

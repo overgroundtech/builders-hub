@@ -11,6 +11,7 @@ type Query {
     cart(cartId: String!): Cart
     order(orderId: Int): Order
     orders: [Order]
+    userOrders(userId: Int): [Order]
     users: [User]
     me: User
 }
@@ -46,7 +47,7 @@ type Mutation {
         productId: Int!
         quantity: Int!
     ): cartMutationPayload
-    createOrder(customerid: Int): orderPayload
+    createOrder(customerId: Int! cartId: String!): orderPayload
     updateOrder(
         orderId: Boolean
         paid: Boolean
@@ -81,7 +82,6 @@ type Cart {
 }
 
 type Item {
-    order: Order
     product: Product
     unitPrice: Float
     quantity: Int
