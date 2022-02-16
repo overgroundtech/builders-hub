@@ -40,7 +40,6 @@ ORDER_STATUS = (
 
 
 class Order(models.Model):
-    cart_id = models.CharField(max_length=100)
     customer = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     paid = models.BooleanField(default=False)
     payment = models.CharField(max_length=30, null=True)
@@ -48,4 +47,15 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default=ORDER_STATUS[0][0])
 
     def __str__(self):
-        return self.id
+        return f"order id:{self.id}"
+
+
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    unit_price = models.FloatField()
+    total_price = models.FloatField()
+
+    def __str__(self):
+        return f'{self.product} order item, Order-id: {self.order.id}'

@@ -1,11 +1,29 @@
 from ariadne import QueryType, convert_kwargs_to_snake_case, MutationType, upload_scalar
-from .models import Product, Category, ProductImage, Order
+from .models import Product, Category, ProductImage, Order, OrderItem
 from django.conf import settings
 from cart.cart import Cart
 from ariadne_jwt.decorators import login_required
 
 query = QueryType()
 mutation = MutationType()
+
+def get_prod(prod_id):
+    prod = Product.objects.get(pk=prod_id)
+    return {
+            "id": prod.id,
+            "name": prod.name,
+            "categoryId": prod.category_id,
+            "price": prod.price,
+            "offer": prod.offer,
+            "discount": prod.discount,
+            "inStock": prod.in_stock,
+            "createdAt": prod.created_at,
+            "description": prod.description,
+            "images": [
+                f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
+            ]
+    }
+
 
 
 @query.field('product')
@@ -86,24 +104,6 @@ def resolve_cat_prods(_, info):
     ]
 
 
-def get_prod(prod_id):
-    prod = Product.objects.get(pk=prod_id)
-    return {
-            "id": prod.id,
-            "name": prod.name,
-            "categoryId": prod.category_id,
-            "price": prod.price,
-            "offer": prod.offer,
-            "discount": prod.discount,
-            "inStock": prod.in_stock,
-            "createdAt": prod.created_at,
-            "description": prod.description,
-            "images": [
-                f'{settings.SITE_URL}{obj.image.url}' for obj in ProductImage.objects.filter(product_id=prod.id)
-            ]
-    }
-
-
 @query.field('similarProducts')
 @convert_kwargs_to_snake_case
 def resolve_similar_products(_, info, product_id):
@@ -135,19 +135,64 @@ def resolve_cart(_, info, cart_id):
 
 @query.field('orders')
 def resolve_orders(_, info):
-    return Order.objects.all()
+    return [
+        {
+            "customer": order.customer,
+            "paid": order.paid,
+            "payment": order.payment,
+            "made_on": order.made_on,
+            "status": order.status,
+            "items": [
+                {
+                    "product": get_prod(item.product.id),
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "total_price": item.total_price
+                }for item in OrderItem.objects.filter(order_id=order.id)
+            ]
+        } for order in Order.objects.all()
+    ]
 
 
 @query.field("order")
 @convert_kwargs_to_snake_case
 def resolve_order(_, info, product_id):
-    return Order.objects.get(pk=product_id)
+    order = Order.objects.get(pk=product_id)
+    return {
+        "customer": order.customer,
+        "paid": order.paid,
+        "payment": order.payment,
+        "made_on": order.made_on,
+        "status": order.status,
+        "items": [
+            {
+                "product": get_prod(item.product.id),
+                "quantity": item.quantity,
+                "unit_price": item.unit_price,
+                "total_price": item.total_price
+            } for item in OrderItem.objects.filter(order_id=order.id)
+        ]
+    }
 
 @query.field("userOrders")
 @convert_kwargs_to_snake_case
 def resolve_user_orders(_, info, user_id):
-    return Order.objects.filter(customer_id=user_id)
-
+    order = Order.objects.filter(customer_id=user_id)
+    return {
+        "customer": order.customer,
+        "paid": order.paid,
+        "payment": order.payment,
+        "made_on": order.made_on,
+        "status": order.status,
+        "items": [
+            {
+                "product": get_prod(item.product.id),
+                "quantity": item.quantity,
+                "unit_price": item.unit_price,
+                "total_price": item.total_price
+            } for item in OrderItem.objects.filter(order_id=order.id)
+        ]
+    }
 
 
 @mutation.field('createCategory')
@@ -287,6 +332,7 @@ def resolve_remove_item(_, info, cart_id, product_id):
             }
         }
 
+
 @mutation.field("updateItem")
 @convert_kwargs_to_snake_case
 def resolve_update_item(_, info, cart_id, product_id, quantity):
@@ -347,9 +393,21 @@ def resolve_search(_, info, key):
 @convert_kwargs_to_snake_case
 @login_required
 def resolve_create_order(_, info, customer_id, cart_id):
+    cart = Cart(cart_id)
     try:
-        order = Order.objects.create(customer_id=customer_id, cart_id=cart_id)
+        order = Order.objects.create(customer_id=customer_id)
         order.save()
+
+        for item in cart:
+            order_item = OrderItem(
+                product_id=item.product.id,
+                order=order,
+                quantity=item.quantity,
+                unit_price=item.unit_price,
+                total_price=item.total_price
+            )
+            order_item.save()
+
         return {
             "success": True
         }
