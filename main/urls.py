@@ -25,7 +25,7 @@ from . schema import schema
 
 
 urlpatterns = [
-    re_path('(^(?!(graphql|admin)).*$)', TemplateView.as_view(template_name="index.html"), name="home"),
+    re_path('(^(?!(graphql|admin|media|static)).*$)', TemplateView.as_view(template_name="index.html"), name="home"),
     path('admin/', admin.site.urls),
     path('graphql/', csrf_exempt(GraphQLView.as_view(schema=schema)))
 ]
