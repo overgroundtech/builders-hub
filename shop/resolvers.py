@@ -261,7 +261,6 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
             "cart": {
                 "items": [
                     {
-                        "order": item.order,
                         "product": get_prod(item.product.id),
                         "unitPrice": item.unit_price,
                         "quantity": item.quantity,
