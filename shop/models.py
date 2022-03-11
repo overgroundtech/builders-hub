@@ -39,7 +39,22 @@ ORDER_STATUS = (
 )
 
 
+class BillingAddress(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    phone_number = models.CharField(max_length=15)
+    location = models.CharField(max_length=100)
+    region = models.CharField(max_length=100)
+    delivery_address = models.TextField()
+
+    def __str__(self):
+        return f"{self.firstname} billing address"
+
+
 class Order(models.Model):
+    billing_address = models.OneToOneField(BillingAddress, on_delete=models.DO_NOTHING)
     customer = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     paid = models.BooleanField(default=False)
     payment = models.CharField(max_length=30, null=True)

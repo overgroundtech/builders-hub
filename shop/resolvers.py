@@ -3,9 +3,12 @@ from .models import Product, Category, ProductImage, Order, OrderItem
 from django.conf import settings
 from cart.cart import Cart
 from ariadne_jwt.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 query = QueryType()
 mutation = MutationType()
+
 
 def get_prod(prod_id):
     prod = Product.objects.get(pk=prod_id)
@@ -177,9 +180,10 @@ def resolve_order(_, info, product_id):
 @query.field("userOrders")
 @convert_kwargs_to_snake_case
 def resolve_user_orders(_, info, user_id):
-    order = Order.objects.filter(customer_id=user_id)
-    return {
-        "customer": order.customer,
+    orders = Order.objects.filter(customer_id=user_id)
+    return [
+        {
+        "customer": get_user_model().objects.get(pk=user_id),
         "paid": order.paid,
         "payment": order.payment,
         "made_on": order.made_on,
@@ -192,7 +196,7 @@ def resolve_user_orders(_, info, user_id):
                 "total_price": item.total_price
             } for item in OrderItem.objects.filter(order_id=order.id)
         ]
-    }
+    }for order in orders]
 
 
 @mutation.field('createCategory')
@@ -204,9 +208,10 @@ def resolve_create_category(_, info, name, image):
         return {
             "success": True
         }
-    except:
+    except ValidationError as e:
         return {
-            "success": False
+            "success": False,
+            "errors": str(e)
         }
 
 
@@ -227,9 +232,10 @@ def resolve_create_product(_, info, name, category_id, price, offer, discount, i
         return{
             "success": True
         }
-    except:
+    except ValidationError as e:
         return {
-            "success": False
+            "success": False,
+            "errors": str(e)
         }
 
 
@@ -243,11 +249,11 @@ def resolve_upload_prod_image(_, info, product_id, image):
         return {
             "success": True
         }
-    except:
+    except ValidationError as e:
         return {
-            "success": False
+            "success": False,
+            "errors": str(e)
         }
-
 
 @mutation.field('addItem')
 @convert_kwargs_to_snake_case
@@ -271,7 +277,7 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
                 "count": cart.count()
             }
         }
-    except:
+    except ValidationError:
         return {
             "success": False,
             "cart": {
@@ -285,7 +291,8 @@ def resolve_add_item(_, info, cart_id, product_id, quantity):
                 ],
                 "summary": cart.summary(),
                 "count": cart.count()
-            }
+            },
+            "errors": str(e)
         }
 
 
@@ -311,7 +318,7 @@ def resolve_remove_item(_, info, cart_id, product_id):
                 "count": cart.count()
             }
         }
-    except:
+    except ValidationError as e:
         return{
             "success": False,
             "cart": {
@@ -325,7 +332,8 @@ def resolve_remove_item(_, info, cart_id, product_id):
                 ],
                 "summary": cart.summary(),
                 "count": cart.count()
-            }
+            },
+            "errors": str(e)
         }
 
 
@@ -351,7 +359,7 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
                 "count": cart.count()
             }
         }
-    except:
+    except ValidationError as e:
         return{
             "success": False,
             "cart": {
@@ -365,7 +373,8 @@ def resolve_update_item(_, info, cart_id, product_id, quantity):
                 ],
                 "summary": cart.summary(),
                 "count": cart.count()
-            }
+            },
+            "errors": str(e)
         }
 
 @mutation.field('search')
@@ -405,9 +414,10 @@ def resolve_create_order(_, info, customer_id, cart_id):
         return {
             "success": True
         }
-    except:
+    except ValidationError as e:
         return {
-            "success": False
+            "success": False,
+            "errors": str(e)
         }
 
 
@@ -424,9 +434,10 @@ def resolve_update_order(_, info,order_id, paid, payment, status):
         return {
            "success": True
         }
-    except:
+    except ValidationError as e:
         return {
-            "success": False
+            "success": False,
+            "errors": str(e)
         }
 
 
